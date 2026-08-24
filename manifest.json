@@ -1,0 +1,22 @@
+{
+  "name": "Tarjeta digital · Officegolden",
+  "short_name": "Officegolden",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#14171C",
+  "theme_color": "#17375D",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#17375D">
+<link rel="apple-touch-icon" href="icon.png">
+<title>Tarjeta digital · Officegolden</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  :root{
+    --ink:#14171C; --parchment:#E7E2D6; --parchment-soft:#F1EDE3;
+    --brand-primary:#17375D; --brand-accent:#E50041; --brand-celeste:#38A5DE;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background: var(--ink);
+    background-image:
+      radial-gradient(circle at 12% 8%, rgba(56,165,222,0.08), transparent 45%),
+      radial-gradient(circle at 88% 92%, rgba(229,0,65,0.10), transparent 50%);
+    color: var(--parchment-soft);
+    font-family:'Space Grotesk', sans-serif;
+    min-height:100dvh;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:18px;
+    padding: 6px;
+  }
+
+  .card-scene{ height:min(94dvh, calc(94vw / 0.42)); aspect-ratio:0.42/1; perspective:1600px;}
+  .card{ position:relative; width:100%; height:100%; transform-style:preserve-3d; -webkit-transform-style:preserve-3d; transition:transform .8s cubic-bezier(.2,.9,.25,1); cursor:pointer;}
+  .card.flipped{ transform:rotateY(180deg);}
+  .face{
+    position:absolute; inset:0; border-radius:16px;
+    backface-visibility:hidden; -webkit-backface-visibility:hidden; -moz-backface-visibility:hidden;
+    box-shadow:0 20px 40px -16px rgba(0,0,0,0.55); overflow:hidden;
+    opacity:1; transition: opacity .01s linear .35s;
+  }
+  .face-back{ opacity:0; pointer-events:none; }
+  .card.flipped .face-front{ opacity:0; pointer-events:none; }
+  .card.flipped .face-back{ opacity:1; pointer-events:auto; }
+
+  /* ---- FRENTE: dividido en dos zonas de color ---- */
+  .face-front{ color:var(--ink); padding:0; display:flex; flex-direction:column; height:100%; }
+
+  .front-top{
+    flex-shrink:0; background: linear-gradient(165deg, var(--parchment) 0%, var(--parchment-soft) 100%);
+    padding:16px 18px 12px; display:flex; flex-direction:column; gap:6px; position:relative;
+  }
+
+  .front-bottom{
+    flex:1; min-height:0; background: linear-gradient(165deg, var(--brand-primary) 0%, #0E2A44 100%);
+    border-top:1px solid rgba(0,0,0,0.12);
+    padding:12px 18px 14px; display:flex; flex-direction:column; gap:10px; position:relative; overflow:hidden;
+  }
+  .front-bottom::before{ content:''; position:absolute; inset:0; background-image: repeating-linear-gradient(115deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 7px); pointer-events:none;}
+
+
+  .brand-logo{ flex-shrink:0; display:flex; justify-content:center; margin:0 0 4px; position:relative; z-index:1; }
+  .brand-logo img{ width:92%; max-width:210px; height:auto; display:block; }
+
+  .avatar{ flex-shrink:0; display:flex; justify-content:center; margin:2px 0; position:relative; z-index:1; }
+  .avatar img{ width:95px; height:95px; border-radius:50%; object-fit:cover; border:2px solid var(--brand-accent); display:block; }
+
+  .person{ text-align:center; position:relative; z-index:1; }
+  .person .name{ font-family:'Fraunces',serif; font-weight:600; font-size:22px; margin:0 0 2px; color:var(--ink); }
+  .person .role{ font-size:12px; color:rgba(20,23,28,0.62); margin:0; font-family:'JetBrains Mono',monospace; letter-spacing:.04em; text-transform:uppercase; }
+
+  .bio{ font-size:13.5px; line-height:1.5; color:rgba(20,23,28,0.55); text-align:center; margin:px 0 0; font-style:regular; position:relative; z-index:1; }
+
+  .work-label{ font-family:'JetBrains Mono',monospace; text-align:center; font-size:12px; letter-spacing:.09em; text-transform:uppercase; color:rgba(245,241,231,0.45); margin:0; position:relative; z-index:1; }
+  .work-strip{
+    display:flex; gap:7px; overflow-x:auto; scroll-snap-type:x mandatory;
+    position:relative; z-index:1; scrollbar-width:none; -ms-overflow-style:none;
+  }
+  .work-strip::-webkit-scrollbar{ display:none; }
+  .work-tile{
+    flex:0 0 95%; aspect-ratio:1; border-radius:8px; scroll-snap-align:start;
+    background:linear-gradient(145deg, rgba(245,241,231,0.10), rgba(245,241,231,0.03));
+    border:1px dashed rgba(245,241,231,0.28);
+    display:flex; align-items:center; justify-content:center;
+    color:rgba(245,241,231,0.3); font-size:15px;
+  }
+
+  .work-dots{ display:flex; justify-content:center; gap:5px; position:relative; z-index:1; }
+  .work-dot{ width:5px; height:5px; border-radius:50%; background:rgba(245,241,231,0.25); transition:background .2s, transform .2s; }
+  .work-dot.active{ background:rgba(245,241,231,0.9); transform:scale(1.35); }
+
+  .wave-divider{ display:none; }
+
+  .social-row{ display:flex; align-items:center; justify-content:center; gap:12px; position:relative; z-index:1;}
+  .social-row a{ width:28px; height:28px; border-radius:50%; background:var(--parchment); color:var(--brand-primary); display:flex; align-items:center; justify-content:center; font-size:12px; text-decoration:none;}
+
+  .save-contact-btn{
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    background:var(--brand-accent); color:#F5F1E7;
+    border:none; border-radius:999px; padding:10px 16px;
+    font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:12.5px;
+    cursor:pointer; position:relative; z-index:1;
+  }
+  .save-contact-btn i{ font-size:12px; }
+
+  .foot-row{ display:flex; justify-content:space-between; align-items:center; position:relative; z-index:1;}
+  .foot-row .company{ font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:.06em; color:rgba(245,241,231,0.7); font-weight:500;}
+  .tap-hint{ font-size:8.5px; font-family:'JetBrains Mono',monospace; color:rgba(245,241,231,0.4); letter-spacing:.05em;}
+
+  .face-back{
+    background: linear-gradient(165deg,#1B2027 0%, var(--ink) 100%);
+    transform:rotateY(180deg);
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; padding:20px;
+  }
+  .seal{ position:relative; width:56px; height:56px; color:var(--brand-accent);}
+  .seal svg{ width:100%; height:100%; animation:spin 14s linear infinite;}
+  .seal .ring-outer{ stroke:currentColor; opacity:0.4; }
+  .seal .ring-inner{ stroke:var(--brand-celeste); opacity:0.55; }
+  .seal .ring-text{ fill:currentColor; }
+  @keyframes spin{ to{ transform:rotate(360deg);} }
+  .seal .check{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:18px; color:inherit;}
+
+  .qr-holder{ background:#F5F1E7; padding:8px; border-radius:10px;}
+  .qr-holder img, .qr-holder canvas{ width:104px !important; height:104px !important; display:block;}
+
+  .back-copy{ text-align:center;}
+  .verified-label{ font-family:'JetBrains Mono',monospace; font-size:13px; letter-spacing:.1em; text-transform:uppercase; color:var(--brand-accent); margin:0 0 4px;}
+  .site{ font-size:12px; color:rgba(245,241,231,0.65); margin:0; max-width:200px; word-break:break-all;}
+
+  .celeste-bar{ width:34px; height:2.5px; border-radius:2px; background:var(--brand-celeste); opacity:0.75; }
+
+  .tap-caption{ flex-shrink:0; font-size:12px; color:rgba(245,241,231,0.4); text-align:center; font-family:'JetBrains Mono',monospace;}
+</style>
+</head>
+<body>
+
+  <div class="card-scene">
+    <div class="card" id="cardEl">
+      <div class="face face-front">
+
+        <div class="front-top">
+          <div class="brand-logo">
+            <img src="logo.png" alt="Officegolden">
+          </div>
+
+          <div class="avatar">
+            <img src="perfil.jpg" alt="Juan Carrera">
+          </div>
+
+          <div class="person">
+            <p class="name">Ing. Juan Carrera</p>
+            <p class="role">Gerente Comercial</p>
+          </div>
+
+          <p class="bio">"Experto en desarrollo de negocios y gestión comercial en salud, especializado en equipos biomédicos y tecnología de diagnóstico por imágenes."</p>
+        </div>
+
+        <div class="front-bottom">
+
+          <p class="work-label">Trabajos recientes</p>
+          <div class="work-strip" id="workStrip">
+            <!-- Reemplaza cada div por: <img src="URL-DE-TU-FOTO" class="work-tile" style="object-fit:cover;"> -->
+            <div class="work-tile"><i class="fa-solid fa-image"></i></div>
+            <div class="work-tile"><i class="fa-solid fa-image"></i></div>
+            <div class="work-tile"><i class="fa-solid fa-image"></i></div>
+            <div class="work-tile"><i class="fa-solid fa-image"></i></div>
+          </div>
+          <div class="work-dots" id="workDots"></div>
+
+          <div class="social-row" id="socialRow">
+            <a href="https://instagram.com/officegolden.ec" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
+            <a href="https://wa.me/593998921565" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+            <a href="https://facebook.com/OfficeGoldenS.A" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+            <a href="https://www.officegolden.com" title="Sitio web"><i class="fa-solid fa-globe"></i></a>
+            <a href="mailto:iso.ventas@officegolden.com" title="Correo"><i class="fa-solid fa-envelope"></i></a>
+          </div>
+          <button class="save-contact-btn" id="saveContactBtn" type="button">
+            <i class="fa-solid fa-address-card"></i> Guardar contacto
+          </button>
+          <div class="foot-row">
+            <span class="company">OFFICEGOLDEN</span>
+            <span class="tap-hint">TOCA PARA VER MÁS ›</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="face face-back">
+        <div class="seal">
+          <svg viewBox="0 0 100 100">
+            <circle class="ring-outer" cx="50" cy="50" r="46" fill="none" stroke-width="2"/>
+            <circle class="ring-inner" cx="50" cy="50" r="39" fill="none" stroke-width="1.5"/>
+          </svg>
+          <div class="check"><i class="fa-solid fa-check"></i></div>
+        </div>
+
+        <div class="qr-holder" id="qrcode"></div>
+
+        <div class="back-copy">
+          <p class="verified-label">Perfil verificado</p>
+          <p class="site" id="siteOut">www.officegolden.com</p>
+        </div>
+
+        <div class="celeste-bar"></div>
+      </div>
+    </div>
+  </div>
+
+
+<script>
+  const cardEl = document.getElementById('cardEl');
+  cardEl.addEventListener('click', () => cardEl.classList.toggle('flipped'));
+
+  // Puntitos del carrusel "Trabajos recientes"
+  const workStrip = document.getElementById('workStrip');
+  const workDots = document.getElementById('workDots');
+  const tiles = workStrip.querySelectorAll('.work-tile');
+
+  // 1) Crea un punto por cada foto (si agregas o quitas fotos, esto se ajusta solo)
+  tiles.forEach((_, i) => {
+    const dot = document.createElement('span');
+    dot.className = 'work-dot' + (i === 0 ? ' active' : '');
+    workDots.appendChild(dot);
+  });
+  const dotEls = workDots.querySelectorAll('.work-dot');
+
+  // 2) Mientras deslizas, calcula qué foto está más cerca del borde izquierdo
+  //    y le pone la clase "active" a su puntito correspondiente
+  workStrip.addEventListener('scroll', () => {
+    let closestIndex = 0;
+    let minDistance = Infinity;
+    tiles.forEach((tile, i) => {
+      const distance = Math.abs(tile.offsetLeft - workStrip.scrollLeft);
+      if (distance < minDistance) { minDistance = distance; closestIndex = i; }
+    });
+    dotEls.forEach((dot, i) => dot.classList.toggle('active', i === closestIndex));
+  });
+
+  // Botón "Guardar contacto": genera un archivo .vcf con los datos de la tarjeta
+  // Íconos de redes sociales: dejar que el link abra normal, pero sin voltear la tarjeta
+  document.getElementById('socialRow').addEventListener('click', function(e){
+    if (e.target.closest('a')) {
+      e.stopPropagation();
+    }
+  });
+
+  document.getElementById('saveContactBtn').addEventListener('click', function(e){
+    e.stopPropagation(); // no voltear la tarjeta al tocar el botón
+
+    const vcard = [
+      'BEGIN:VCARD',
+      'VERSION:3.0',
+      'N:Carrera;Juan;;Ing.;',
+      'FN:Ing. Juan Carrera',
+      'ORG:Officegolden',
+      'TITLE:Gerente Comercial',
+      'TEL;TYPE=CELL:+593998921565',
+      'URL:https://www.officegolden.com',
+      'END:VCARD'
+    ].join('\n');
+
+    const blob = new Blob([vcard], { type: 'text/vcard' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'Juan-Carrera.vcf';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  });
+
+  new QRCode(document.getElementById('qrcode'), {
+    text: 'https://www.officegolden.com',
+    width: 104, height: 104,
+    colorDark: '#14171C',
+    colorLight: '#F5F1E7',
+    correctLevel: QRCode.CorrectLevel.M
+  });
+</script>
+</body>
+</html>
