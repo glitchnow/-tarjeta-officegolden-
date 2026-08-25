@@ -28,19 +28,18 @@
       radial-gradient(circle at 88% 92%, rgba(229,0,65,0.10), transparent 50%);
     color: var(--parchment-soft);
     font-family:'Space Grotesk', sans-serif;
-    min-height:100dvh;
-    display:flex; flex-direction:column; align-items:center; justify-content:center;
-    gap:18px;
-    padding: max(6px, env(safe-area-inset-top)) max(6px, env(safe-area-inset-right)) max(6px, env(safe-area-inset-bottom)) max(6px, env(safe-area-inset-left));
+    height:100dvh;
+    overflow:hidden;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
   }
 
-  .card-scene{ height:min(94dvh, calc(94vw / 0.42)); aspect-ratio:0.42/1; perspective:1600px;}
+  .card-scene{ width:100%; height:100%; perspective:1600px;}
   .card{ position:relative; width:100%; height:100%; transform-style:preserve-3d; -webkit-transform-style:preserve-3d; transition:transform .8s cubic-bezier(.2,.9,.25,1); cursor:pointer;}
   .card.flipped{ transform:rotateY(180deg);}
   .face{
-    position:absolute; inset:0; border-radius:16px;
+    position:absolute; inset:0;
     backface-visibility:hidden; -webkit-backface-visibility:hidden; -moz-backface-visibility:hidden;
-    box-shadow:0 20px 40px -16px rgba(0,0,0,0.55); overflow:hidden;
+    overflow:hidden;
     opacity:1; transition: opacity .01s linear .35s;
   }
   .face-back{ opacity:0; pointer-events:none; }
@@ -201,7 +200,7 @@
 
         <div class="back-copy">
           <p class="verified-label">Perfil verificado</p>
-          <p class="site" id="siteOut">www.officegolden.com</p>
+          <p class="site" id="siteOut">Escanea para ver esta tarjeta</p>
         </div>
 
         <div class="celeste-bar"></div>
@@ -274,7 +273,7 @@
   });
 
   new QRCode(document.getElementById('qrcode'), {
-    text: 'https://www.officegolden.com',
+    text: 'https://dcardjuancarreraofficegolden.pages.dev',
     width: 104, height: 104,
     colorDark: '#14171C',
     colorLight: '#F5F1E7',
