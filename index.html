@@ -63,13 +63,13 @@
 
 
   .brand-logo{ flex-shrink:0; display:flex; justify-content:center; margin:0 0 4px; position:relative; z-index:1; }
-  .brand-logo img{ width:102%; max-width:222px; height:auto; display:block; }
+  .brand-logo img{ width:102%; max-width:280px; height:auto; display:block; }
 
   .avatar{ flex-shrink:0; display:flex; justify-content:center; margin:2px 0; position:relative; z-index:1; }
   .avatar img{ width:115px; height:115px; border-radius:50%; object-fit:cover; border:2px solid var(--brand-accent); display:block; }
 
   .person{ text-align:center; position:relative; z-index:1; }
-  .person .name{ font-family:'Fraunces',serif; font-weight:600; font-size:30px; margin:0 0 2px; color:var(--ink); }
+  .person .name{ font-family:'Fraunces',serif; font-weight:600; font-size:26px; margin:0 0 2px; color:var(--ink); }
   .person .role{ font-size:12px; color:rgba(20,23,28,0.62); margin:0; font-family:'JetBrains Mono',monospace; letter-spacing:.04em; text-transform:uppercase; }
 
   .bio{ font-size:15px; font-weight:700; line-height:1.5; color:rgba(20,23,28,0.6); text-align:center; margin:6px 0 0; position:relative; z-index:1; }
@@ -116,22 +116,22 @@
     transform:rotateY(180deg);
     display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; padding:20px;
   }
-  .seal{ position:relative; width:56px; height:56px; color:var(--brand-accent);}
+  .seal{ position:relative; width:74px; height:74px; color:var(--brand-accent);}
   .seal svg{ width:100%; height:100%; animation:spin 14s linear infinite;}
   .seal .ring-outer{ stroke:currentColor; opacity:0.4; }
   .seal .ring-inner{ stroke:var(--brand-celeste); opacity:0.55; }
   .seal .ring-text{ fill:currentColor; }
   @keyframes spin{ to{ transform:rotate(360deg);} }
-  .seal .check{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:18px; color:inherit;}
+  .seal .check{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:24px; color:inherit;}
 
-  .qr-holder{ background:#F5F1E7; padding:8px; border-radius:10px;}
-  .qr-holder img, .qr-holder canvas{ width:104px !important; height:104px !important; display:block;}
+  .qr-holder{ background:#F5F1E7; padding:10px; border-radius:12px;}
+  .qr-holder img, .qr-holder canvas{ width:130px !important; height:130px !important; display:block;}
 
   .back-copy{ text-align:center;}
-  .verified-label{ font-family:'JetBrains Mono',monospace; font-size:13px; letter-spacing:.1em; text-transform:uppercase; color:var(--brand-accent); margin:0 0 4px;}
-  .site{ font-size:12px; color:rgba(245,241,231,0.65); margin:0; max-width:200px; word-break:break-all;}
+  .verified-label{ font-family:'JetBrains Mono',monospace; font-size:15px; letter-spacing:.1em; text-transform:uppercase; color:var(--brand-accent); margin:0 0 4px;}
+  .site{ font-size:13.5px; color:rgba(245,241,231,0.65); margin:0; max-width:200px; word-break:break-all;}
 
-  .celeste-bar{ width:34px; height:2.5px; border-radius:2px; background:var(--brand-celeste); opacity:0.75; }
+  .celeste-bar{ width:42px; height:3px; border-radius:2px; background:var(--brand-celeste); opacity:0.75; }
 
   .tap-caption{ flex-shrink:0; font-size:12px; color:rgba(245,241,231,0.4); text-align:center; font-family:'JetBrains Mono',monospace;}
 
@@ -198,7 +198,7 @@
           <div class="social-row" id="socialRow">
             <a href="https://instagram.com/officegolden.ec" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
             <a href="https://wa.me/593998921565" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
-            <a href="https://www.facebook.com/OfficeGoldenSA/" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+            <a href="https://www.facebook.com/share/1En3EdxoSH/" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
             <a href="https://www.officegolden.com" title="Sitio web"><i class="fa-solid fa-globe"></i></a>
             <a href="mailto:iso.ventas@officegolden.com" title="Correo"><i class="fa-solid fa-envelope"></i></a>
           </div>
@@ -350,7 +350,7 @@
 
   new QRCode(document.getElementById('qrcode'), {
     text: 'https://dcardjuancarreraofficegolden.pages.dev',
-    width: 104, height: 104,
+    width: 130, height: 130,
     colorDark: '#14171C',
     colorLight: '#F5F1E7',
     correctLevel: QRCode.CorrectLevel.M
