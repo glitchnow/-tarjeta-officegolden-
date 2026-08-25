@@ -66,11 +66,11 @@
   .brand-logo img{ width:102%; max-width:222px; height:auto; display:block; }
 
   .avatar{ flex-shrink:0; display:flex; justify-content:center; margin:2px 0; position:relative; z-index:1; }
-  .avatar img{ width:105px; height:105px; border-radius:50%; object-fit:cover; border:2px solid var(--brand-accent); display:block; }
+  .avatar img{ width:115px; height:115px; border-radius:50%; object-fit:cover; border:2px solid var(--brand-accent); display:block; }
 
   .person{ text-align:center; position:relative; z-index:1; }
-  .person .name{ font-family:'Fraunces',serif; font-weight:600; font-size:26px; margin:0 0 2px; color:var(--ink); }
-  .person .role{ font-size:12px; color:rgba(20,23,28,0.62); margin:0; font-family:'JetBrains Mono',monospace; letter-spacing:.04em; text-transform:uppercase; }
+  .person .name{ font-family:'Fraunces',serif; font-weight:600; font-size:30px; margin:0 0 2px; color:var(--ink); }
+  .person .role{ font-size:14px; color:rgba(20,23,28,0.62); margin:0; font-family:'JetBrains Mono',monospace; letter-spacing:.04em; text-transform:uppercase; }
 
   .bio{ font-size:13.5px; line-height:1.5; color:rgba(20,23,28,0.55); text-align:center; margin:px 0 0; font-style:regular; position:relative; z-index:1; }
 
@@ -182,23 +182,23 @@
           <p class="work-label">Trabajos recientes</p>
           <div class="work-strip" id="workStrip">
             <!-- Para agregar/quitar fotos o videos, copia o borra líneas como estas -->
-            <img src="trabajo1.jpeg" class="work-tile" style="object-fit:cover; border:none; background:none;">
-            <img src="trabajo2.jpeg" class="work-tile" style="object-fit:cover; border:none; background:none;">
-            <img src="trabajo3.jpeg" class="work-tile" style="object-fit:cover; border:none; background:none;">
-            <img src="trabajo4.jpeg" class="work-tile" style="object-fit:cover; border:none; background:none;">
-            <img src="trabajo5.jpeg" class="work-tile" style="object-fit:cover; border:none; background:none;">
-            <img src="trabajo6.jpeg" class="work-tile" style="object-fit:cover; border:none; background:none;">
-            <img src="trabajo7.jpeg" class="work-tile" style="object-fit:cover; border:none; background:none;">
-            <img src="trabajo8.jpeg" class="work-tile" style="object-fit:cover; border:none; background:none;">
-            <video src="video1.mp4" class="work-tile" style="object-fit:cover; border:none; background:none;" muted autoplay loop playsinline></video>
-            <video src="video2.mp4" class="work-tile" style="object-fit:cover; border:none; background:none;" muted autoplay loop playsinline></video>
+            <img src="trabajo1.jpeg" class="work-tile" style="object-fit:contain; border:none; background:rgba(0,0,0,0.15);">
+            <img src="trabajo2.jpeg" class="work-tile" style="object-fit:contain; border:none; background:rgba(0,0,0,0.15);">
+            <img src="trabajo3.jpeg" class="work-tile" style="object-fit:contain; border:none; background:rgba(0,0,0,0.15);">
+            <img src="trabajo4.jpeg" class="work-tile" style="object-fit:contain; border:none; background:rgba(0,0,0,0.15);">
+            <img src="trabajo5.jpeg" class="work-tile" style="object-fit:contain; border:none; background:rgba(0,0,0,0.15);">
+            <img src="trabajo6.jpeg" class="work-tile" style="object-fit:contain; border:none; background:rgba(0,0,0,0.15);">
+            <img src="trabajo7.jpeg" class="work-tile" style="object-fit:contain; border:none; background:rgba(0,0,0,0.15);">
+            <img src="trabajo8.jpeg" class="work-tile" style="object-fit:contain; border:none; background:rgba(0,0,0,0.15);">
+            <video src="video1.mp4" class="work-tile" style="object-fit:contain; border:none; background:rgba(0,0,0,0.15);" muted autoplay loop playsinline></video>
+            <video src="video2.mp4" class="work-tile" style="object-fit:contain; border:none; background:rgba(0,0,0,0.15);" muted autoplay loop playsinline></video>
           </div>
           <div class="work-dots" id="workDots"></div>
 
           <div class="social-row" id="socialRow">
             <a href="https://instagram.com/officegolden.ec" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
             <a href="https://wa.me/593998921565" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
-            <a href="https://facebook.com/OfficeGoldenS.A" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+            <a href="https://facebook.com/OfficeGoldenSA" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
             <a href="https://www.officegolden.com" title="Sitio web"><i class="fa-solid fa-globe"></i></a>
             <a href="mailto:iso.ventas@officegolden.com" title="Correo"><i class="fa-solid fa-envelope"></i></a>
           </div>
@@ -288,6 +288,14 @@
       video.autoplay = true;
       video.playsInline = true;
       lightboxContent.appendChild(video);
+
+      // Pantalla completa nativa: el celular gira solo el video al horizontal
+      video.play().catch(() => {});
+      if (video.requestFullscreen) {
+        video.requestFullscreen().catch(() => {});
+      } else if (video.webkitEnterFullscreen) {
+        video.webkitEnterFullscreen(); // Safari / iPhone
+      }
     }
     lightboxOverlay.classList.add('active');
   }
