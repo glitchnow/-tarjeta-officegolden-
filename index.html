@@ -78,6 +78,7 @@
   .work-strip{
     display:flex; gap:7px; overflow-x:auto; scroll-snap-type:x mandatory;
     position:relative; z-index:1; scrollbar-width:none; -ms-overflow-style:none;
+    touch-action:pan-x; -webkit-overflow-scrolling:touch;
   }
   .work-strip::-webkit-scrollbar{ display:none; }
   .work-tile{
@@ -240,6 +241,11 @@
 
   // Botón "Guardar contacto": genera un archivo .vcf con los datos de la tarjeta
   // Íconos de redes sociales: dejar que el link abra normal, pero sin voltear la tarjeta
+  // Evita que deslizar las fotos del carrusel también voltee la tarjeta
+  workStrip.addEventListener('click', function(e){
+    e.stopPropagation();
+  });
+
   document.getElementById('socialRow').addEventListener('click', function(e){
     if (e.target.closest('a')) {
       e.stopPropagation();
