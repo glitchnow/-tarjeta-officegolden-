@@ -7,7 +7,9 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#17375D">
+<!-- Color de la barra del navegador: igual al fondo crema de la parte superior de la tarjeta.
+     El JavaScript lo cambia solo al voltear la tarjeta (reverso oscuro) o al abrir una foto. -->
+<meta name="theme-color" content="#E7E2D6" id="themeColor">
 <link rel="apple-touch-icon" href="icon.png">
 <title>Tarjeta digital · Officegolden</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -33,7 +35,15 @@
     padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
   }
 
-  .card-scene{ width:100%; height:100%; perspective:1600px;}
+  /* Franjas del notch (arriba) y de la barra de inicio (abajo):
+     toman el color de la tarjeta para que no se vea un borde negro */
+  .safe-strip{ position:fixed; left:0; right:0; z-index:0; transition:background-color .3s ease .35s; pointer-events:none; }
+  .safe-top{ top:0; height:env(safe-area-inset-top); background:var(--parchment); }
+  .safe-bottom{ bottom:0; height:env(safe-area-inset-bottom); background:#0E2A44; }
+  body.is-flipped .safe-top{ background:#1B2027; }
+  body.is-flipped .safe-bottom{ background:var(--ink); }
+
+  .card-scene{ width:100%; height:100%; perspective:1600px; position:relative; z-index:1;}
   .card{ position:relative; width:100%; height:100%; transform-style:preserve-3d; -webkit-transform-style:preserve-3d; transition:transform .8s cubic-bezier(.2,.9,.25,1); cursor:pointer;}
   .card.flipped{ transform:rotateY(180deg);}
   .face{
@@ -156,6 +166,9 @@
 </head>
 <body>
 
+  <div class="safe-strip safe-top"></div>
+  <div class="safe-strip safe-bottom"></div>
+
   <div class="card-scene">
     <div class="card" id="cardEl">
       <div class="face face-front">
@@ -240,8 +253,37 @@
 
 
 <script>
+  // ---- Color de la barra del navegador según lo que se ve en pantalla ----
+  const themeMeta = document.getElementById('themeColor');
+  const THEME_FRONT = '#E7E2D6';  // crema de la parte superior del frente
+  const THEME_BACK  = '#1B2027';  // gris oscuro del reverso
+  const THEME_LIGHTBOX = '#0A0A0A'; // negro al ver una foto ampliada
+  function setTheme(color){ themeMeta.setAttribute('content', color); }
+
+  // ---- Pantalla completa real (Android: Chrome / Samsung Internet) ----
+  // El navegador solo la permite después de un toque de la persona,
+  // así que se activa con el primer toque en cualquier parte de la tarjeta.
+  // En iPhone, Safari no lo permite para páginas web: ahí simplemente no hace nada.
+  const isInstalledApp = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+  function enterFullscreen(){
+    if (isInstalledApp || document.fullscreenElement || document.webkitFullscreenElement) return;
+    const root = document.documentElement;
+    const req = root.requestFullscreen || root.webkitRequestFullscreen;
+    if (!req) return;
+    try {
+      const result = req.call(root, { navigationUI: 'hide' });
+      if (result && result.catch) result.catch(() => {});
+    } catch (err) {}
+  }
+  document.addEventListener('click', enterFullscreen, { capture: true, once: true });
+
   const cardEl = document.getElementById('cardEl');
-  cardEl.addEventListener('click', () => cardEl.classList.toggle('flipped'));
+  cardEl.addEventListener('click', () => {
+    cardEl.classList.toggle('flipped');
+    const flipped = cardEl.classList.contains('flipped');
+    document.body.classList.toggle('is-flipped', flipped);
+    setTheme(flipped ? THEME_BACK : THEME_FRONT);
+  });
 
   // Puntitos del carrusel "Trabajos recientes"
   const workStrip = document.getElementById('workStrip');
@@ -268,8 +310,6 @@
     dotEls.forEach((dot, i) => dot.classList.toggle('active', i === closestIndex));
   });
 
-  // Botón "Guardar contacto": genera un archivo .vcf con los datos de la tarjeta
-  // Íconos de redes sociales: dejar que el link abra normal, pero sin voltear la tarjeta
   // Evita que deslizar las fotos del carrusel también voltee la tarjeta,
   // y si el toque fue justo sobre una foto/video, lo abre ampliado
   const lightboxOverlay = document.getElementById('lightboxOverlay');
@@ -298,11 +338,15 @@
       }
     }
     lightboxOverlay.classList.add('active');
+    setTheme(THEME_LIGHTBOX);
   }
 
   function closeLightbox(){
     lightboxOverlay.classList.remove('active');
     lightboxContent.innerHTML = ''; // corta el audio/video al cerrar
+    setTheme(cardEl.classList.contains('flipped') ? THEME_BACK : THEME_FRONT);
+    // Si al cerrar un video el navegador salió de pantalla completa, la recupera (Android)
+    enterFullscreen();
   }
 
   workStrip.addEventListener('click', function(e){
@@ -316,12 +360,14 @@
   });
   document.getElementById('lightboxClose').addEventListener('click', closeLightbox);
 
+  // Íconos de redes sociales: dejar que el link abra normal, pero sin voltear la tarjeta
   document.getElementById('socialRow').addEventListener('click', function(e){
     if (e.target.closest('a')) {
       e.stopPropagation();
     }
   });
 
+  // Botón "Guardar contacto": genera un archivo .vcf con los datos de la tarjeta
   document.getElementById('saveContactBtn').addEventListener('click', function(e){
     e.stopPropagation(); // no voltear la tarjeta al tocar el botón
 
