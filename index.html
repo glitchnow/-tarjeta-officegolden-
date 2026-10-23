@@ -89,13 +89,19 @@
     display:flex; gap:7px; overflow-x:auto; scroll-snap-type:x mandatory;
     position:relative; z-index:1; scrollbar-width:none; -ms-overflow-style:none;
     touch-action:pan-x; -webkit-overflow-scrolling:touch;
+    /* El carrusel ocupa todo el alto libre de la zona azul (iPhone y Android igual) */
+    flex:1 1 auto; min-height:120px;
   }
   .work-strip::-webkit-scrollbar{ display:none; }
   .work-tile{
-    flex:0 0 95%; aspect-ratio:1; border-radius:8px; scroll-snap-align:start;
+    /* Cada foto ocupa todo el ancho y alto del carrusel, centrada.
+       Antes era cuadrada (aspect-ratio) y Safari en iPhone la desplazaba a la derecha */
+    flex:0 0 100%; width:100%; min-width:0; height:100%;
+    object-fit:contain; object-position:center center;
+    border-radius:8px; scroll-snap-align:start; scroll-snap-stop:always;
     background:linear-gradient(145deg, rgba(245,241,231,0.10), rgba(245,241,231,0.03));
     border:1px dashed rgba(245,241,231,0.28);
-    display:flex; align-items:center; justify-content:center;
+    display:block;
     color:rgba(245,241,231,0.3); font-size:15px;
   }
 
@@ -203,8 +209,8 @@
             <img src="trabajo6.jpeg" class="work-tile" style="object-fit:contain; border:none; background:rgba(0,0,0,0.15);">
             <img src="trabajo7.jpeg" class="work-tile" style="object-fit:contain; border:none; background:rgba(0,0,0,0.15);">
             <img src="trabajo8.jpeg" class="work-tile" style="object-fit:contain; border:none; background:rgba(0,0,0,0.15);">
-            <video src="video1.mp4" class="work-tile" style="object-fit:contain; border:none; background:rgba(0,0,0,0.15);" muted autoplay loop playsinline></video>
-            <video src="video2.mp4" class="work-tile" style="object-fit:contain; border:none; background:rgba(0,0,0,0.15);" muted autoplay loop playsinline></video>
+            <video src="video1.mp4#t=0.1" preload="metadata" class="work-tile" style="object-fit:contain; border:none; background:rgba(0,0,0,0.15);" muted autoplay loop playsinline></video>
+            <video src="video2.mp4#t=0.1" preload="metadata" class="work-tile" style="object-fit:contain; border:none; background:rgba(0,0,0,0.15);" muted autoplay loop playsinline></video>
           </div>
           <div class="work-dots" id="workDots"></div>
 
